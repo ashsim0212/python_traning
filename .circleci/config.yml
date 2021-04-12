@@ -1,0 +1,125 @@
+import unittest
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
+import django
+from selenium.webdriver.support import expected_conditions as EC
+import time
+import smtplib
+import pyperclip
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.chrome.options import Options
+import os
+from django.core.mail import send_mail
+import json
+from urllib.request import Request, urlopen
+import selenium as se
+
+import random
+import string
+
+
+
+driver =  webdriver.Chrome("/usr/local/bin/chromedriver 3 2")
+"""
+driver_exe = '/usr/local/bin/chromedriver 3 2'
+options = Options()
+options.add_argument("--headless")
+driver = webdriver.Chrome(driver_exe, options=options)
+"""
+delay = 7 # seconds
+wait = WebDriverWait(driver, 20)
+
+def Registration_Email (EMAIL):
+    URL = 'https://stage.smartpush.ai/'
+    driver.get(URL)
+
+    register_button = driver.find_element_by_partial_link_text("Regist")
+    register_button.click()
+
+    check_box =driver.find_element_by_xpath('/html/body/div[1]/div[2]/div/div[2]/div/div/div/div[2]/div/div/span/span/input')
+    reg_button= driver.find_element_by_xpath('/html/body/div[1]/div[2]/div/div[2]/div/div/div/button/span')
+
+    email_adress_input =driver.find_element_by_name('email')
+    reg_button.click()
+    try:
+        element = WebDriverWait(driver, delay).until(
+            EC.presence_of_element_located((By.XPATH, "//*[text()[contains(.,'The email must be a valid email address.')]]"))
+            )
+    except:
+        print("Empty Validation  don't correct !")
+
+    invalid_email_list= [
+        'plainaddress',
+        '#@%^%#$@#$@#.com',
+        '@example.com',
+        'Joe Smith <email@example.com>',
+        'email.example.com',
+        'email@example@example.com',
+        '.email@example.com',
+        'email.@example.com',
+        'email..email@example.com',
+        'あいうえお@example.com',
+        'email@example.com (Joe Smith)',
+        'email@example',
+        'email@-example.com',
+        #'emaisl@zexample.webvvvvggghyhh',
+        'email@111.222.333.44444',
+        'email@example..com',
+        'Abc..123@example.com']
+
+    check_box.click()
+
+    for i in invalid_email_list :
+        email_adress_input.send_keys(Keys.BACKSPACE * 30)
+        email_adress_input.send_keys(i)
+        reg_button.click()
+        try:
+            element = WebDriverWait(driver, delay).until(
+                EC.presence_of_element_located((By.XPATH, "//*[text()[contains(.,'The email must be a valid email address.')]]"))
+                )
+        except:
+            print(i +"  Validation  don't correct !")
+
+
+
+
+
+
+    email_adress_input.send_keys(Keys.BACKSPACE * 30)
+
+    email_adress_input.send_keys(EMAIL + "@mailinator.com")
+    check_box.click()
+
+    reg_button.click()
+    try:
+        element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//*[text()[contains(.,'Please accept our Privacy Policy and Terms of Use, so you can use SmartPush')]]"))
+     )
+    except:
+        print("Check Box  Validation  don't correct !")
+
+
+
+
+    wait.until(EC.presence_of_element_located((By.XPATH,"/html/body/div[1]/div[2]/div/div[2]/div/div/div/div[2]/div/p")))
+
+    check_box.click()
+    reg_button.click()
+    try:
+        element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//*[text()[contains(.,'Thank you for choosing us!')]]"))
+            )
+    except:
+        print("Valid email Validation  don't correct !")
+    print("Registration page correct ")
+
+    #driver.quit()
